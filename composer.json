@@ -1,0 +1,14 @@
+{
+    "name": "vendor/ai-agent",
+    "description": "Description of project ai-agent.",
+    "authors": [
+        {
+            "name": "Stefano",
+            "email": "your@email.here"
+        }
+    ],
+    "require": {
+        "neuron-core/neuron-ai": "2.5.4",
+        "inspector-apm/neuron-ai": "2.5.4"
+    }
+}
