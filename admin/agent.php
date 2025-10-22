@@ -1,4 +1,5 @@
 <?php
+
 defined('ABSPATH') || exit;
 
 use NeuronAI\Agent;
@@ -53,7 +54,6 @@ class AssistantAgent extends Agent {
     }
 
     protected function tools(): array {
-        error_log('Adding tools');
 
         if (!function_exists('wp_get_abilities')) {
             return [];
@@ -63,7 +63,7 @@ class AssistantAgent extends Agent {
         $tools = [];
 
         foreach ($abilities as $ability) {
-            error_log('Adding ability');
+
             // TODO: Use the ability label?
             $tool = Tool::make(
                     str_replace('/', '-', $ability->get_name()),
@@ -89,12 +89,11 @@ class AssistantAgent extends Agent {
             // TODO: What about if I need to return an error? What's best for the LLM?
 
             $tool->setCallable(function (...$args) use ($ability) {
-                error_log($ability->get_name() . ' invoked');
-                //error_log(print_r($args, true));
+
                 $properties = $ability->get_input_schema()['properties'];
-//
+
                 $r = $ability->execute($args);
-error_log(print_r($r, true));
+
                 if (is_array($r)) {
                     if (count($r) === 1) {
                         return array_shift($r);
@@ -103,9 +102,9 @@ error_log(print_r($r, true));
                     foreach ($r as $k => $v) {
                         $b .= $k . ': ' . $v . "\n";
                     }
-                    //error_log($b);
+
                     return $b;
-                    return wp_json_encode($r);
+                    //return wp_json_encode($r);
                 }
                 return $r;
             });

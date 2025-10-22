@@ -136,7 +136,7 @@ $table->prepare_items();
         <p>This configuration does not work!</p>
 
         <?php $table->display(); ?>
-        <p><button name="save">Save</button></p>
+        <p><button name="save" class="button button-primary">Save</button></p>
 
         <h3>LLM Providers</h3>
         <table class="widefat">
@@ -179,7 +179,7 @@ $table->prepare_items();
                 </tr>
             </tbody>
         </table>
-        <p><button name="save">Save</button></p>
+        <p><button name="save" class="button button-primary">Save</button></p>
 
     </form>
 

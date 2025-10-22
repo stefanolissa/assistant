@@ -23,7 +23,7 @@ scp_target=stefano@www.thenewsletterplugin.com:/var/www/thenewsletterplugin.com/
         <property name="slug" value="assistant"/>
         <echo>Slug: ${slug}</echo>
 
-        <loadfile property="plugin" file="assistant"/>
+        <loadfile property="plugin" file="${slug}.php"/>
 
         <propertyregex pattern="Version: ([^\s]+)" match="$1" property="version" subject="${plugin}"/>
         <echo>Version: ${version}</echo>

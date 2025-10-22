@@ -1,13 +1,11 @@
 <?php
 defined('ABSPATH') || exit;
-$subpage = $_GET['subpage'] ?? '';
 
+//$subpage = $_GET['subpage'] ?? '';
+//
 //switch ($subpage) {
-//    case 'logs':
-//        include __DIR__ . '/logs.php';
-//        return;
-//    case 'view':
-//        include __DIR__ . '/view.php';
+//    case 'settings':
+//        include __DIR__ . '/settings.php';
 //        return;
 //}
 
@@ -181,7 +179,7 @@ AssistantAgent::make()->resolveChatHistory()->flushAll();
                 const botReply = await getBotResponseFromServer(userText);
 
                 // -----------------------------------------------------------------
-                // 2️⃣ Replace the placeholder with the actual reply
+                // Replace the placeholder with the actual reply
                 // -----------------------------------------------------------------
                 typingEl.remove();                 // drop the “…”
                 addMessage(botReply, 'bot');       // render final bubble

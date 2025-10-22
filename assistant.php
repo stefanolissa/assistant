@@ -3,7 +3,7 @@
 /**
  * Plugin Name: AI Assistant
  * Description: Administrative AI assistant
- * Version: 0.0.1
+ * Version: 0.0.2
  * Author: satollo
  * Author URI: https://www.satollo.net
  * License: GPL-2.0+
@@ -16,7 +16,7 @@
  */
 defined('ABSPATH') || exit;
 
-define('ASSISTANT_VERSION', '0.0.1');
+define('ASSISTANT_VERSION', '0.0.2');
 
 //register_activation_hook(__FILE__, function () {
 //    require_once __DIR__ . '/admin/activate.php';
@@ -41,7 +41,7 @@ add_filter('update_plugins_satollo_assistant', function ($update, $plugin_data, 
     }
 
     if (!$data) {
-        $response = wp_remote_get('https://www.satollo.net/repo/monitor/assistant.json');
+        $response = wp_remote_get('https://www.satollo.net/repo/assistant/assistant.json');
         $data = json_decode(wp_remote_retrieve_body($response));
         if (is_object($data)) {
             $data->updated = time();
