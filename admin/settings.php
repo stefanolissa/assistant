@@ -132,13 +132,12 @@ $table->prepare_items();
 
     <form method="post">
 
-        <h3>Abilities</h3>
-        <p>This configuration does not work!</p>
+        <h3>AI Providers</h3>
+        <p>
+            The Assistant needs an AI provider. Create an account and get an API key from a provider
+            of your choice, please.
+        </p>
 
-        <?php $table->display(); ?>
-        <p><button name="save" class="button button-primary">Save</button></p>
-
-        <h3>LLM Providers</h3>
         <table class="widefat">
             <thead>
                 <tr>
@@ -177,11 +176,43 @@ $table->prepare_items();
                         <input type="text" name="data[openai_key]" class="key" value="<?php echo esc_attr($settings['openai_key'] ?? ''); ?>">
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        <input type="radio" name="data[provider]" value="anthropic" <?php echo $provider === 'anthropic' ? 'checked' : ''; ?>>
+                    </td>
+                    <td>
+                        Anthropic - Claude
+                    </td>
+                    <td>
+                        <input type="text" name="data[anthropic_model]" class="model" value="<?php echo esc_attr($settings['anthropic_model'] ?? ''); ?>" placeholder="claude-sonnet-4-20250514">
+                    </td>
+                    <td>
+                        <input type="text" name="data[anthropic_key]" class="key" value="<?php echo esc_attr($settings['anthropic_key'] ?? ''); ?>">
+                    </td>
+                </tr>
             </tbody>
         </table>
         <p><button name="save" class="button button-primary">Save</button></p>
 
+        <h3>Abilities</h3>
+        <p>
+            Listed below the "abilities" your site makes available to the Assistant to get information or
+            execute tasks. This is something new, expect themes and plugins to add more and more abilities.
+        </p>
+        <p>
+            Select the abilities you want make usable by the Assistant.
+        </p>
+
+        <p>This configuration does not work, by now.</p>
+
+        <?php $table->display(); ?>
+        <p><button name="save" class="button button-primary">Save</button></p>
+
     </form>
 
+    <h3>Debug</h3>
+    <p>
+        That helps me when supporting you...
+    </p>
     <pre><?php echo esc_html(print_r(get_option('assistant'), true)); ?></pre>
 </div>

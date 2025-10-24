@@ -3,7 +3,7 @@
 /**
  * Plugin Name: AI Assistant
  * Description: Administrative AI assistant
- * Version: 0.0.2
+ * Version: 0.0.3
  * Author: satollo
  * Author URI: https://www.satollo.net
  * License: GPL-2.0+
@@ -16,7 +16,7 @@
  */
 defined('ABSPATH') || exit;
 
-define('ASSISTANT_VERSION', '0.0.2');
+define('ASSISTANT_VERSION', '0.0.3');
 
 //register_activation_hook(__FILE__, function () {
 //    require_once __DIR__ . '/admin/activate.php';

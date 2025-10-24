@@ -20,8 +20,20 @@ require_once __DIR__ . '/agent.php';
 AssistantAgent::make()->resolveChatHistory()->flushAll();
 
 ?>
+<script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
 <div class="wrap">
     <h2>How may I help you?</h2>
+
+    <div class="notice notice-warning">
+        <p>
+            Please note: the Assistant capabilities depend on the Abilities provided by your site via plugins and
+            themes and how they're described and implemented. The quality of the interaction depends on the
+            AI provider you choose in the settings.
+        </p>
+        <p>
+            <strong>Be aware the Abilities available could be destructive!</strong>
+        </p>
+    </div>
 
 
     <style>
@@ -31,7 +43,7 @@ AssistantAgent::make()->resolveChatHistory()->flushAll();
             margin:0;
             display:flex;
             flex-direction:column;
-            height:80vh;
+            height:70vh;
         }
         #chat {
             flex:1;
@@ -78,7 +90,11 @@ AssistantAgent::make()->resolveChatHistory()->flushAll();
 
     <div id="container">
 
-        <div id="chat"></div>
+        <div id="chat">
+            <div class="message bot">
+                Welcome. Try asking "available tools" to know the abilities I can use.
+            </div>
+        </div>
 
         <div id="inputArea">
             <input type="text" id="msgInput" placeholder="Type a message…" autocomplete="off"/>
@@ -97,7 +113,12 @@ AssistantAgent::make()->resolveChatHistory()->flushAll();
             function addMessage(text, sender) {
                 const el = document.createElement('div');
                 el.className = `message ${sender}`;
-                el.innerHTML = text;
+                if (sender === 'bot') {
+                    console.log(text);
+                    el.innerHTML = marked.parse(text);
+                } else {
+                    el.innerHTML = text;
+                }
                 chatDiv.appendChild(el);
                 chatDiv.scrollTop = chatDiv.scrollHeight;
             }
@@ -129,14 +150,8 @@ AssistantAgent::make()->resolveChatHistory()->flushAll();
                         return `⚠️ Oops – the server responded with ${response.status}.`;
                     }
 
-                    // ---------------------------------------------------------
-                    // 2️⃣ Parse JSON payload
-                    // ---------------------------------------------------------
                     const data = await response.json();
 
-                    // ---------------------------------------------------------
-                    // 3️⃣ Validate expected shape
-                    // ---------------------------------------------------------
                     if (!data || typeof data.reply !== 'string') {
                         console.warn('Unexpected payload:', data);
                         return '🤔 Received an unexpected response from the server.';

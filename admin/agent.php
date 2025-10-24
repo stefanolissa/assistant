@@ -29,6 +29,11 @@ class AssistantAgent extends Agent {
                         key: $settings['openai_key'],
                         model: $settings['openai_model'] ?: 'gpt-5-nano',
                 );
+            case 'anthropic':
+                return new \NeuronAI\Providers\Anthropic\Anthropic(
+                        key: $settings['anthropic_key'],
+                        model: $settings['anthropic_model'] ?: 'claude-sonnet-4-20250514',
+                );
         }
     }
 
@@ -48,7 +53,8 @@ class AssistantAgent extends Agent {
                         ],
                         output:
                         [
-                            "Return the whole tool output without producing more content",
+                            "Reformulate the content returned by the tools, unless the tool specify display the contente as-is.",
+                            "Translate the answer in the language used in the question.",
                         ]
                 );
     }
@@ -115,11 +121,11 @@ class AssistantAgent extends Agent {
         return $tools;
     }
 
-//    protected function chatHistory(): ChatHistoryInterface {
-//        return new FileChatHistory(
-//                directory: WP_CONTENT_DIR . '/cache/ai-agent',
-//                key: 'chat',
-//                contextWindow: 2000
-//        );
-//    }
+    protected function chatHistory(): ChatHistoryInterface {
+        return new FileChatHistory(
+                directory: WP_CONTENT_DIR . '/cache/ai-agent',
+                key: 'chat',
+                contextWindow: 2000
+        );
+    }
 }
