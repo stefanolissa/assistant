@@ -15,6 +15,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     check_admin_referer('bulk-abilities');
     $settings = $_POST['data'];
     update_option('assistant', $settings ?? []);
+
+    // When the provider or the model is changed, the chat history must be deleted
+    // (I should create a chat history for each provider+model but I'm lazy and probably
+    // is not worth the time)
+    require_once __DIR__ . '/../vendor/autoload.php';
+    require_once __DIR__ . '/agent.php';
+
+    AssistantAgent::make()->resolveChatHistory()->flushAll();
 }
 
 $settings = get_option('assistant', []);
@@ -184,14 +192,30 @@ $table->prepare_items();
                         Anthropic - Claude
                     </td>
                     <td>
-                        <input type="text" name="data[anthropic_model]" class="model" value="<?php echo esc_attr($settings['anthropic_model'] ?? ''); ?>" placeholder="claude-sonnet-4-20250514">
+                        <input type="text" name="data[anthropic_model]" class="model" value="<?php echo esc_attr($settings['anthropic_model'] ?? ''); ?>" placeholder="claude-3-haiku-20240307">
                     </td>
                     <td>
                         <input type="text" name="data[anthropic_key]" class="key" value="<?php echo esc_attr($settings['anthropic_key'] ?? ''); ?>">
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        <input type="radio" name="data[provider]" value="gemini" <?php echo $provider === 'gemini' ? 'checked' : ''; ?>>
+                    </td>
+                    <td>
+                        Google - Gemini
+                    </td>
+                    <td>
+                        <input type="text" name="data[gemini_model]" class="model" value="<?php echo esc_attr($settings['gemini_model'] ?? ''); ?>" placeholder="gemini-2.5-flash">
+                        <p class="description"><a href="https://ai.google.dev/gemini-api/docs/models" target="_blank">Model list</a></p>
+                    </td>
+                    <td>
+                        <input type="text" name="data[gemini_key]" class="key" value="<?php echo esc_attr($settings['gemini_key'] ?? ''); ?>">
+                    </td>
+                </tr>
             </tbody>
         </table>
+
         <p><button name="save" class="button button-primary">Save</button></p>
 
         <h3>Abilities</h3>

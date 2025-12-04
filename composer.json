@@ -8,7 +8,6 @@
         }
     ],
     "require": {
-        "neuron-core/neuron-ai": "2.6.3",
-        "inspector-apm/neuron-ai": "2.5.4"
+        "neuron-core/neuron-ai": "2.8.2"
     }
 }

@@ -3,7 +3,7 @@
 defined('ABSPATH') || exit;
 
 // TODO: Move on activate
-wp_mkdir_p(WP_CONTENT_DIR . '/cache/ai-agent');
+wp_mkdir_p(WP_CONTENT_DIR . '/cache/assistant');
 
 add_action('admin_menu', function () {
 
@@ -21,6 +21,13 @@ add_action('admin_menu', function () {
                 include __DIR__ . '/settings.php';
             }
     );
+
+    add_submenu_page(
+            'admin.php', 'Chat', 'Chat', 'administrator', 'assistant-chat',
+            function () {
+                include __DIR__ . '/chat.php';
+            }
+    );
 });
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -28,13 +35,11 @@ require_once __DIR__ . '/agent.php';
 
 add_action('wp_ajax_assistant_message', function () {
 
-    $response = AssistantAgent::make()->chat(
+    $response = AssistantAgent::make($_POST['category'])->chat(
             new \NeuronAI\Chat\Messages\UserMessage($_POST['message'])
     );
 
-
     $content = $response->getContent();
-    $content = str_replace("\n", '<br>', $content);
 
     echo wp_json_encode(['reply' => $content]);
     die();

@@ -16,6 +16,12 @@ use NeuronAI\Chat\History\FileChatHistory;
 
 class AssistantAgent extends Agent {
 
+    var $category;
+
+    function __construct($category = 0) {
+        $this->category = sanitize_key($category);
+    }
+
     protected function provider(): AIProviderInterface {
         $settings = get_option('assistant', []);
         switch ($settings['provider']) {
@@ -32,29 +38,40 @@ class AssistantAgent extends Agent {
             case 'anthropic':
                 return new \NeuronAI\Providers\Anthropic\Anthropic(
                         key: $settings['anthropic_key'],
-                        model: $settings['anthropic_model'] ?: 'claude-sonnet-4-20250514',
+                        model: $settings['anthropic_model'] ?: 'claude-3-haiku-20240307',
+                        parameters: ['max_tokens' => 4096]
+                );
+            case 'gemini':
+                return new \NeuronAI\Providers\Gemini\Gemini(
+                        key: $settings['gemini_key'],
+                        model: $settings['gemini_model'] ?: 'gemini-2.5-flash',
+                        parameters: []
                 );
         }
     }
 
     public function instructions(): string {
+        $instructions = '';
+        $category = wp_get_ability_category($this->category);
+        if ($category) {
+            $instructions = $category->get_meta()['instructions'] ?? '';
+        }
         return (string) new SystemPrompt(
                         background:
                         [
-                            "Assist the user invoking the provided tools. If a tool cannot be identify, stop.",
-                            "Do not build an answer if a tool is not available, reply there is no tool for that request."
+                            "Use a friendly tone and be very short when answering.",
+                            "User only the provided tools. If the correct tool cannot be found reply there is no tool to complete the request.",
+                            $instructions
                         ],
                         steps:
                         [
-                            "Find the correct tool from the provided ones to execute the task",
-                            "Check if the user provided the correct parameters to use the tools, otherwise ask for more details",
-                            "Execute the tool",
-                            "Stop"
                         ],
                         output:
                         [
                             "Reformulate the content returned by the tools, unless the tool specify display the contente as-is.",
-                            "Translate the answer in the language used in the question.",
+                            "Translate the answer in the language used in the request.",
+                            "Use markdown to format the response.",
+                            "Links must open on a new tab"
                         ]
                 );
     }
@@ -70,15 +87,16 @@ class AssistantAgent extends Agent {
 
         foreach ($abilities as $ability) {
 
+            if ($this->category && $ability->get_category() !== $this->category) {
+                continue;
+            }
+
             // TODO: Use the ability label?
             $tool = Tool::make(
                     str_replace('/', '-', $ability->get_name()),
-                    $ability->get_description());
-
-            $properties = $ability->get_input_schema()['properties'];
+                    $ability->get_description() . ' ' . $ability->get_meta_item('instructions', ''));
+            $properties = $ability->get_input_schema()['properties'] ?? [];
             foreach ($properties as $name => $data) {
-
-                // TODO: Manage the required and the enums
 
                 $tool->addProperty(new ToolProperty(
                                 $name,
@@ -89,21 +107,20 @@ class AssistantAgent extends Agent {
                 ));
             }
 
-            //error_log(print_r($tool, true));
-            // $args is an associative array that should ocntain exactly the input required by
-            // the ability.
-            // TODO: What about if I need to return an error? What's best for the LLM?
 
             $tool->setCallable(function (...$args) use ($ability) {
 
-                $properties = $ability->get_input_schema()['properties'];
-
                 $r = $ability->execute($args);
+
+                if (is_wp_error($r)) {
+                    return $r->get_error_message();
+                }
 
                 if (is_array($r)) {
                     if (count($r) === 1) {
                         return array_shift($r);
                     }
+                    return wp_json_encode($r);
                     $b = '';
                     foreach ($r as $k => $v) {
                         $b .= $k . ': ' . $v . "\n";
@@ -123,7 +140,7 @@ class AssistantAgent extends Agent {
 
     protected function chatHistory(): ChatHistoryInterface {
         return new FileChatHistory(
-                directory: WP_CONTENT_DIR . '/cache/ai-agent',
+                directory: WP_CONTENT_DIR . '/cache/assistant',
                 key: 'chat',
                 contextWindow: 2000
         );

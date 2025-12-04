@@ -48,6 +48,7 @@ scp_target=stefano@www.thenewsletterplugin.com:/var/www/thenewsletterplugin.com/
                 <exclude name="${dir}/build.xml" />
                 <exclude name="${dir}/phpstan.*" />
                 <exclude name="${dir}/composer.*" />
+                <exclude name="${dir}/readme.MD" />
             </fileset>
         </zip>
 
