@@ -68,7 +68,7 @@ class AssistantAgent extends Agent {
                         ],
                         output:
                         [
-                            "Reformulate the content returned by the tools, unless the tool specify display the contente as-is.",
+                            "Reformulate the content returned by the tools, unless the tool specifies display the contente as-is.",
                             "Translate the answer in the language used in the request.",
                             "Use markdown to format the response.",
                             "Links must open on a new tab"
@@ -96,14 +96,15 @@ class AssistantAgent extends Agent {
                     str_replace('/', '-', $ability->get_name()),
                     $ability->get_description() . ' ' . $ability->get_meta_item('instructions', ''));
             $properties = $ability->get_input_schema()['properties'] ?? [];
+            $required = $ability->get_input_schema()['required'] ?? [];
             foreach ($properties as $name => $data) {
-
+                $enum = $data['items']['enum'] ?? $data['enum'] ?? []; // Ok, I know...
                 $tool->addProperty(new ToolProperty(
                                 $name,
                                 PropertyType::fromSchema($data['type']),
                                 $data['description'],
-                                $data['required'] ?? false,
-                                $data['enum'] ?? []
+                                in_array($name, $required),
+                                $enum
                 ));
             }
 

@@ -8,6 +8,6 @@
         }
     ],
     "require": {
-        "neuron-core/neuron-ai": "2.8.2"
+        "neuron-core/neuron-ai": "2.8.*"
     }
 }
