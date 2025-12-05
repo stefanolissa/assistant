@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Assistant
  * Description: Assistant based on AI to interact with your WP abilities
- * Version: 0.0.3
+ * Version: 0.0.4
  * Author: satollo
  * Author URI: https://www.satollo.net
  * License: GPL-2.0+
@@ -16,7 +16,7 @@
  */
 defined('ABSPATH') || exit;
 
-define('ASSISTANT_VERSION', '0.0.3');
+define('ASSISTANT_VERSION', '0.0.4');
 
 //register_activation_hook(__FILE__, function () {
 //    require_once __DIR__ . '/admin/activate.php';
